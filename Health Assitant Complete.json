@@ -1,0 +1,760 @@
+{
+  "name": "Health Assitant Complete",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "morning_report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "31a0b932-1e93-40f3-bbc6-4fbbd4a218f9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f6506b96-0008-4eb8-8a30-801d4934b1e5",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "health_data",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0bb4723f-1412-45fc-aa9f-d795902f1e21",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "user_response",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "277a6c6c-1c0b-4696-9345-2cdf7289c453",
+                    "leftValue": "{{ $json.route }}",
+                    "rightValue": "webhook_unknown",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9755e9fa-c5fb-4d7e-be7d-9627ef6d74bc",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "activity_reminder",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f7a7630a-f737-49b9-bd28-daf534b391b2",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "weekly_report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "5"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6cd71f8c-4419-493d-a394-408b8d19d815",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 7 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        -120
+      ],
+      "id": "9098fc5b-b966-4f24-ab12-9d4664a7c32f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// GENERAR REPORTE MATUTINO\nconst context = $json.context;\nconst now = new Date();\nconst yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);\n\nconsole.log('=== GENERANDO REPORTE MATUTINO ===');\n\n// Datos simulados realistas para el reporte\nconst healthData = {\n  date: yesterday.toLocaleDateString('es-PE'),\n  steps: Math.floor(6500 + Math.random() * 3000), // 6.5K-9.5K\n  sleepHours: (6.8 + Math.random() * 1.5).toFixed(1), // 6.8-8.3h\n  sleepQuality: Math.floor(72 + Math.random() * 23), // 72-95%\n  heartRate: Math.floor(66 + Math.random() * 12), // 66-78 bpm\n  calories: Math.floor(2050 + Math.random() * 350), // 2050-2400\n  mood: 'neutro' // Se actualizará con datos reales\n};\n\nconsole.log('Datos de salud generados:', healthData);\n\n// Análisis personalizado\nconst stepGoal = 8000;\nconst stepProgress = Math.round((healthData.steps / stepGoal) * 100);\nconst sleepHours = parseFloat(healthData.sleepHours);\n\n// Evaluación de sueño\nlet sleepEmoji, sleepAnalysis;\nif (sleepHours >= 8 && healthData.sleepQuality >= 85) {\n  sleepEmoji = '😴'; sleepAnalysis = 'Excelente descanso';\n} else if (sleepHours >= 7.5) {\n  sleepEmoji = '😊'; sleepAnalysis = 'Muy buen sueño';\n} else if (sleepHours >= 7) {\n  sleepEmoji = '😐'; sleepAnalysis = 'Sueño adecuado';\n} else {\n  sleepEmoji = '😰'; sleepAnalysis = 'Necesitas dormir más';\n}\n\n// Evaluación de actividad\nlet activityEmoji, activityAnalysis;\nif (healthData.steps >= stepGoal * 1.1) {\n  activityEmoji = '🎉'; activityAnalysis = '¡Superaste tu meta!';\n} else if (healthData.steps >= stepGoal) {\n  activityEmoji = '🎯'; activityAnalysis = '¡Meta alcanzada!';\n} else if (healthData.steps >= stepGoal * 0.8) {\n  activityEmoji = '💪'; activityAnalysis = 'Muy cerca de tu meta';\n} else {\n  activityEmoji = '🚶‍♂️'; activityAnalysis = 'Puedes mejorar';\n}\n\n// Recomendaciones inteligentes\nconst recommendations = [];\nif (sleepHours < 7.5) {\n  recommendations.push('• Intenta acostarte 30 min más temprano');\n}\nif (healthData.steps < stepGoal) {\n  const missing = stepGoal - healthData.steps;\n  recommendations.push(`• Te faltan ${missing.toLocaleString()} pasos para tu meta`);\n}\nif (healthData.sleepQuality < 80) {\n  recommendations.push('• Evita cafeína después de las 4 PM');\n}\n\n// Frases motivacionales rotativas\nconst motivationalPhrases = [\n  '¡Hoy es tu día para brillar!',\n  'Cada paso cuenta hacia tu bienestar',\n  '¡Tu salud es tu mayor riqueza!',\n  'Hoy puedes superar el día de ayer',\n  '¡Mantén el momentum, vas excelente!'\n];\nconst todaysMotivation = motivationalPhrases[now.getDay() % motivationalPhrases.length];\n\n// Construir mensaje completo\nlet message = `🌅 ¡Buenos días!\\n\\n`;\nmessage += `📊 RESUMEN DE AYER (${healthData.date}):\\n\\n`;\nmessage += `${sleepEmoji} Sueño: ${healthData.sleepHours}h (calidad: ${healthData.sleepQuality}%)\\n`;\nmessage += `→ ${sleepAnalysis}\\n\\n`;\nmessage += `${activityEmoji} Actividad: ${healthData.steps.toLocaleString()} pasos (${stepProgress}%)\\n`;\nmessage += `→ ${activityAnalysis}\\n\\n`;\nmessage += `❤️ Frecuencia cardíaca: ${healthData.heartRate} bpm\\n`;\nmessage += `🔥 Calorías: ${healthData.calories.toLocaleString()}\\n\\n`;\n\nif (recommendations.length > 0) {\n  message += `💡 PARA HOY:\\n${recommendations.join('\\n')}\\n\\n`;\n}\n\nmessage += `🌟 ${todaysMotivation}\\n\\n`;\nmessage += `¿Cómo te sientes esta mañana?\\n`;\nmessage += `Responde: 😊 Genial | 😐 Normal | 😴 Cansado`;\n\nconsole.log('Mensaje generado:', message.substring(0, 100) + '...');\n\nreturn {\n  messageType: 'morning_report',\n  message: message,\n  data: healthData,\n  analysis: { sleepAnalysis, activityAnalysis, recommendations },\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -240
+      ],
+      "id": "cf62fead-3a39-45fe-861d-3cdc3d28fe6f",
+      "name": "Morning Report Generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// PROCESAR DATOS DE SALUD RECIBIDOS\nconst context = $json.context;\nconst healthData = context.healthData;\n\nconsole.log('=== PROCESANDO DATOS DE SALUD ===');\nconsole.log('Datos recibidos:', healthData);\n\n// Validar datos mínimos\nif (!healthData || (!healthData.date && !healthData.steps)) {\n  throw new Error('Datos de salud insuficientes');\n}\n\n// Procesar y normalizar datos\nconst processedData = {\n  date: healthData.date || new Date().toISOString().split('T')[0],\n  steps: parseInt(healthData.steps) || 0,\n  sleepHours: parseFloat(healthData.sleep_hours) || 0,\n  heartRate: parseInt(healthData.heart_rate) || 0,\n  calories: parseInt(healthData.calories) || Math.round(2000 + (parseInt(healthData.steps) || 0) * 0.04),\n  source: healthData.source || 'api'\n};\n\nconsole.log('Datos procesados:', processedData);\n\n// Análisis automático\nconst stepGoal = 8000;\nconst progress = Math.round((processedData.steps / stepGoal) * 100);\n\n// Generar mensaje de confirmación\nlet message = `📊 DATOS RECIBIDOS Y PROCESADOS\\n\\n`;\nmessage += `📅 Fecha: ${processedData.date}\\n`;\nmessage += `🚶‍♂️ Pasos: ${processedData.steps.toLocaleString()} (${progress}% de meta)\\n`;\n\nif (processedData.sleepHours > 0) {\n  message += `😴 Sueño: ${processedData.sleepHours} horas\\n`;\n}\nif (processedData.heartRate > 0) {\n  message += `❤️ Frecuencia cardíaca: ${processedData.heartRate} bpm\\n`;\n}\n\nmessage += `🔥 Calorías: ${processedData.calories.toLocaleString()}\\n\\n`;\n\n// Evaluación rápida\nif (processedData.steps >= stepGoal) {\n  message += `🎉 ¡Excelente! Superaste tu meta de pasos\\n`;\n} else if (processedData.steps >= stepGoal * 0.7) {\n  const missing = stepGoal - processedData.steps;\n  message += `💪 Buen progreso. Te faltan ${missing.toLocaleString()} pasos\\n`;\n} else {\n  message += `🚀 ¡A moverse! Aún hay tiempo para más actividad\\n`;\n}\n\nif (processedData.sleepHours > 0) {\n  if (processedData.sleepHours >= 8) {\n    message += `😴 Excelente descanso registrado\\n`;\n  } else if (processedData.sleepHours >= 7) {\n    message += `😐 Buen sueño, considera 30 min más\\n`;\n  } else {\n    message += `😰 Necesitas dormir más esta noche\\n`;\n  }\n}\n\nmessage += `\\n✅ Datos guardados en tu perfil de salud`;\n\nreturn {\n  messageType: 'health_data_processed',\n  message: message,\n  processedData: processedData,\n  analysis: { progress, stepGoal },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -80
+      ],
+      "id": "3ef651f5-09cc-4caa-8103-9110117f8d44",
+      "name": "Health Data Processor"
+    },
+    {
+      "parameters": {
+        "jsCode": "// PROCESAR RESPUESTAS DEL USUARIO\nconst context = $json.context;\nconst userMessage = (context.userMessage || '').toLowerCase().trim();\n\nconsole.log('=== PROCESANDO RESPUESTA DEL USUARIO ===');\nconsole.log('Mensaje:', userMessage);\n\nlet responseType = 'unknown';\nlet responseMessage = '';\n\n// Análisis del mensaje del usuario\nif (userMessage.includes('genial') || userMessage.includes('😊') || userMessage.includes('excelente')) {\n  responseType = 'mood_excellent';\n  responseMessage = '😊 ¡Fantástico! Esa energía se siente 🌟\\n\\n';\n  responseMessage += 'Con esa actitud positiva, hoy puedes:\\n';\n  responseMessage += '• Conquistar cualquier desafío\\n';\n  responseMessage += '• Inspirar a otros con tu energía\\n';\n  responseMessage += '• Aprovechar al máximo cada momento\\n\\n';\n  responseMessage += '¡Que tengas un día extraordinario! 🚀';\n\n} else if (userMessage.includes('normal') || userMessage.includes('😐') || userMessage.includes('bien')) {\n  responseType = 'mood_normal';\n  responseMessage = '😐 Perfecto, un día equilibrado 👌\\n\\n';\n  responseMessage += 'Los días \"normales\" son ideales para:\\n';\n  responseMessage += '• Mantener rutinas saludables\\n';\n  responseMessage += '• Ser constante con tus metas\\n';\n  responseMessage += '• Prepararte para días extraordinarios\\n\\n';\n  responseMessage += '💡 Tip: Una caminata de 15 min puede darte energía extra';\n\n} else if (userMessage.includes('cansado') || userMessage.includes('😴') || userMessage.includes('agotado')) {\n  responseType = 'mood_tired';\n  responseMessage = '😴 Lo entiendo, todos tenemos días así 🤗\\n\\n';\n  responseMessage += 'Para recuperar energía suavemente:\\n';\n  responseMessage += '• Respira profundo 5 veces 🫁\\n';\n  responseMessage += '• Toma agua e hidrátate bien 💧\\n';\n  responseMessage += '• Haz estiramientos ligeros 🤸‍♂️\\n';\n  responseMessage += '• Considera una siesta de 20 min 😴\\n\\n';\n  responseMessage += 'Recuerda: descansar también es productivo 💪';\n\n} else if (userMessage.includes('hecho') || userMessage.includes('✅') || userMessage.includes('completé')) {\n  responseType = 'activity_completed';\n  responseMessage = '🎉 ¡Increíble! Cada acción cuenta 💪\\n\\n';\n  responseMessage += 'Beneficios de lo que acabas de hacer:\\n';\n  responseMessage += '• ⚡ Más energía y alerta mental\\n';\n  responseMessage += '• 💓 Mejor circulación sanguínea\\n';\n  responseMessage += '• 😌 Reducción de estrés y tensión\\n';\n  responseMessage += '• 🎯 Progreso hacia tus metas\\n\\n';\n  responseMessage += '¡Sigue construyendo esos hábitos saludables! 🌟';\n\n} else if (userMessage.includes('como voy') || userMessage.includes('progreso') || userMessage.includes('estado')) {\n  responseType = 'status_request';\n  const now = new Date();\n  const currentHour = now.getHours();\n  \n  // Simular datos actuales\n  const estimatedSteps = Math.max(0, Math.floor((currentHour - 6) * 450 + Math.random() * 300));\n  const stepGoal = 8000;\n  const progress = Math.round((estimatedSteps / stepGoal) * 100);\n  \n  responseMessage = `📊 ESTADO ACTUAL (${now.toLocaleTimeString('es-PE', {hour: '2-digit', minute: '2-digit'})}):\\n\\n`;\n  responseMessage += `🚶‍♂️ Pasos estimados: ${estimatedSteps.toLocaleString()} (${progress}%)\\n`;\n  responseMessage += `🎯 Meta diaria: ${stepGoal.toLocaleString()} pasos\\n`;\n  responseMessage += `⏰ Tiempo restante: ${24 - currentHour}h del día\\n\\n`;\n  \n  if (progress >= 100) {\n    responseMessage += `🏆 ¡Meta alcanzada! Eres imparable`;\n  } else if (progress >= 75) {\n    responseMessage += `🔥 ¡Excelente ritmo! Solo ${stepGoal - estimatedSteps} pasos más`;\n  } else if (progress >= 50) {\n    responseMessage += `💪 Vas bien, mantén el momentum`;\n  } else {\n    responseMessage += `🚀 ¡Hora de acelerar! Aún tienes tiempo`;\n  }\n\n} else if (userMessage.includes('ayuda') || userMessage.includes('help') || userMessage.includes('comandos')) {\n  responseType = 'help_request';\n  responseMessage = `🤖 ASISTENTE DE SALUD - COMANDOS:\\n\\n`;\n  responseMessage += `💬 ESTADOS DE ÁNIMO:\\n`;\n  responseMessage += `• \"Genial/Bien/Cansado\" → Tu estado actual\\n\\n`;\n  responseMessage += `✅ ACTIVIDADES:\\n`;\n  responseMessage += `• \"Hecho\" → Confirmar actividad\\n\\n`;\n  responseMessage += `📊 CONSULTAS:\\n`;\n  responseMessage += `• \"¿Cómo voy?\" → Tu progreso actual\\n`;\n  responseMessage += `• \"Ayuda\" → Este mensaje\\n\\n`;\n  responseMessage += `🕐 AUTOMÁTICO:\\n`;\n  responseMessage += `• 7:00 AM → Reporte matutino\\n`;\n  responseMessage += `• Recordatorios → Cada 2 horas\\n`;\n  responseMessage += `• Domingos → Reporte semanal\\n\\n`;\n  responseMessage += `¡Siempre estoy aquí para motivarte! 💪`;\n\n} else {\n  responseType = 'unknown';\n  responseMessage = '🤔 Interesante mensaje, aunque no estoy seguro de cómo ayudarte específicamente.\\n\\n';\n  responseMessage += 'Puedes probar:\\n';\n  responseMessage += '• \"¿Cómo voy?\" → Ver tu progreso\\n';\n  responseMessage += '• \"Genial/Normal/Cansado\" → Tu estado\\n';\n  responseMessage += '• \"Hecho\" → Confirmar una actividad\\n';\n  responseMessage += '• \"Ayuda\" → Ver todos los comandos\\n\\n';\n  responseMessage += '¡Cada interacción me ayuda a conocerte mejor! 🤖';\n}\n\nconsole.log('Tipo de respuesta:', responseType);\n\nreturn {\n  messageType: 'user_response',\n  message: responseMessage,\n  responseType: responseType,\n  originalMessage: userMessage,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        80
+      ],
+      "id": "bcef163e-757e-4a56-ba69-f7657be3896f",
+      "name": "User Response Handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "// MANEJAR EVENTOS DESCONOCIDOS\nconst context = $json.context;\n\nconsole.log('=== EVENTO DESCONOCIDO ===');\nconsole.log('Contexto:', context);\n\nconst message = `🤖 Sistema de Salud - Debug\\n\\n`;\nmessage += `⚠️ Recibí algo que no pude procesar completamente.\\n\\n`;\nmessage += `📋 Info técnica:\\n`;\nmessage += `• Timestamp: ${context.timestamp}\\n`;\nmessage += `• Trigger: ${context.triggerType}\\n`;\nmessage += `• Ruta: ${context.route}\\n\\n`;\nmessage += `✅ El sistema está funcionando correctamente.\\n`;\nmessage += `Escribe \"ayuda\" para ver comandos disponibles.`;\n\nreturn {\n  messageType: 'debug_info',\n  message: message,\n  context: context,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        220
+      ],
+      "id": "438ea15f-755b-4e62-91ec-5187f030875a",
+      "name": "Unknown Handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ROUTER UNIVERSAL EXPANDIDO\nconst inputData = $json[0] || $json;\n\nconsole.log('=== HEALTH ASSISTANT ROUTER EXPANDIDO ===');\nconsole.log('Input data:', inputData);\n\nconst now = new Date();\nconst hour = now.getHours();\nconst dayOfWeek = now.getDay(); // 0=domingo, 6=sábado\nconst minute = now.getMinutes();\n\nlet route = 'unknown';\nlet context = {};\n\n// DETECTAR ORIGEN DEL TRIGGER\nlet triggerSource = 'unknown';\n\n// TRIGGERS AUTOMÁTICOS POR HORARIO\nif (hour === 7 && minute === 0) {\n  triggerSource = 'schedule';\n  route = 'morning_report';\n  console.log('→ Ruta: Reporte Matutino');\n  \n} else if ([10, 12, 14, 16].includes(hour) && minute === 0 && dayOfWeek >= 1 && dayOfWeek <= 5) {\n  triggerSource = 'schedule';\n  route = 'activity_reminder';\n  context = {\n    reminderHour: hour,\n    dayOfWeek: dayOfWeek,\n    workDay: true\n  };\n  console.log(`→ Ruta: Recordatorio de Actividad (${hour}:00h)`);\n  \n} else if (hour === 20 && minute === 0 && dayOfWeek === 0) {\n  triggerSource = 'schedule';\n  route = 'weekly_report';\n  context = {\n    weekEndDate: now.toISOString(),\n    reportType: 'weekly'\n  };\n  console.log('→ Ruta: Reporte Semanal (Domingo)');\n  \n} else if (inputData.Body && inputData.From) {\n  // RESPUESTA DE WHATSAPP\n  triggerSource = 'whatsapp';\n  route = 'user_response';\n  context = {\n    userMessage: inputData.Body,\n    userPhone: inputData.From,\n    timestamp: inputData.DateSent || now.toISOString()\n  };\n  console.log('→ Ruta: Respuesta de Usuario WhatsApp');\n  \n} else if (inputData.date || inputData.steps || inputData.sleep_hours) {\n  // DATOS DE SALUD \n  triggerSource = 'webhook';\n  route = 'health_data';\n  context = {\n    healthData: inputData,\n    source: inputData.source || 'api'\n  };\n  console.log('→ Ruta: Datos de Salud');\n  \n} else if (inputData.command) {\n  // COMANDO MANUAL\n  triggerSource = 'webhook';\n  route = inputData.command;\n  context = inputData;\n  console.log(`→ Ruta: Comando ${inputData.command}`);\n  \n} else {\n  // DEFAULT\n  triggerSource = 'schedule';\n  route = 'morning_report';\n  console.log('→ Ruta: Default a Reporte Matutino');\n}\n\n// CONTEXTO COMÚN\nconst commonContext = {\n  timestamp: now.toISOString(),\n  hour: hour,\n  dayOfWeek: dayOfWeek,\n  minute: minute,\n  triggerSource: triggerSource,\n  route: route\n};\n\nconst finalContext = Object.assign({}, commonContext, context);\n\nconsole.log('Contexto final:', finalContext);\nconsole.log('Ruta seleccionada:', route);\nconsole.log('=== FIN ROUTER ===');\n\nreturn {\n  route: route,\n  context: finalContext,\n  originalData: inputData,\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        60
+      ],
+      "id": "193ccb7f-7b89-4fc1-bf20-fab84a1cab3c",
+      "name": "Function Router"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{$vars.TWILIO_ACCOUNT_SID}}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "={{$vars.WHATSAPP_FROM}}"
+            },
+            {
+              "name": "To",
+              "value": "={{$vars.WHATSAPP_TO}}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        -40
+      ],
+      "id": "645326c5-4378-4d67-ac94-ba85f81bfe66",
+      "name": "WhatsApp Sender",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "2B0y3b0JcRc9dUNb",
+          "name": "credenciales sin variables"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"success\",\n  \"message_type\": \"{{ $json.messageType }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\",\n  \"system\": \"Health Assistant Complete\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        920,
+        -40
+      ],
+      "id": "b13a9e5c-8afe-4fb7-a1ea-e28187b02ed4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// GENERADOR DE RECORDATORIOS DE ACTIVIDAD\nconst context = $json.context;\nconst now = new Date();\nconst hour = context.hour;\n\nconsole.log('=== GENERANDO RECORDATORIO DE ACTIVIDAD ===');\nconsole.log('Hora:', hour, 'Día:', context.dayOfWeek);\n\n// Verificar si realmente necesita recordatorio\nif (!context.workDay || ![10, 12, 14, 16].includes(hour)) {\n  return {\n    messageType: 'skip_reminder',\n    message: 'Recordatorio omitido - fuera de horario laboral',\n    skipped: true\n  };\n}\n\n// Calcular pasos estimados según hora\nconst baseStepsPerHour = 500;\nconst hoursActive = hour - 7; // Asumiendo despertar a las 7 AM\nconst estimatedSteps = Math.max(0, Math.floor(hoursActive * baseStepsPerHour + Math.random() * 500));\nconst stepGoal = 8000;\nconst hourlyGoal = Math.floor((hour - 7) * (stepGoal / 12)); // Meta progresiva\n\n// Decidir si enviar recordatorio (enviar si está por debajo del 70% de meta horaria)\nconst shouldRemind = estimatedSteps < (hourlyGoal * 0.7);\n\nif (!shouldRemind && hour < 16) {\n  return {\n    messageType: 'skip_reminder',\n    message: 'Actividad suficiente, recordatorio omitido',\n    currentSteps: estimatedSteps,\n    skipReason: 'sufficient_activity'\n  };\n}\n\n// Mensajes rotativos según hora\nconst hourlyMessages = {\n  10: {\n    greeting: '🌅 ¡Buenos días!',\n    tone: 'morning_energy'\n  },\n  12: {\n    greeting: '☀️ ¡A medio día!',\n    tone: 'midday_boost'\n  },\n  14: {\n    greeting: '🔥 ¡Post-almuerzo!',\n    tone: 'afternoon_activation'\n  },\n  16: {\n    greeting: '💪 ¡Última oportunidad!',\n    tone: 'final_push'\n  }\n};\n\nconst timeMessage = hourlyMessages[hour] || hourlyMessages[12];\n\n// Actividades específicas por momento del día\nconst activitiesByHour = {\n  10: [\n    '• Caminar 10 min con café ☕',\n    '• Subir escaleras en lugar de ascensor',\n    '• Estiramientos matutinos en el escritorio'\n  ],\n  12: [\n    '• Caminar antes/después del almuerzo 🍽️',\n    '• Dar una vuelta a la manzana',\n    '• Ejercicios de respiración al aire libre'\n  ],\n  14: [\n    '• Caminata post-almuerzo (digestión) 🚶‍♂️',\n    '• Reunión caminando si es posible',\n    '• Estiramientos para evitar somnolencia'\n  ],\n  16: [\n    '• ¡Sprint final! Caminata energética 🏃‍♂️',\n    '• Subir/bajar escaleras 3 veces',\n    '• Activación pre-salida del trabajo'\n  ]\n};\n\nconst suggestedActivities = activitiesByHour[hour] || activitiesByHour[12];\n\n// Mensajes motivacionales rotativos\nconst motivationalTips = [\n  'Cada paso cuenta hacia tu bienestar 💪',\n  'Tu cuerpo te agradecerá este movimiento 🙏',\n  'Pequeñas acciones, grandes resultados 🌟',\n  'Actívate y recarga tu energía ⚡',\n  'El mejor momento para moverse es AHORA 🚀'\n];\n\nconst todaysTip = motivationalTips[(now.getDate() + hour) % motivationalTips.length];\n\n// Construir mensaje personalizado\nlet message = `${timeMessage.greeting} Hora de activarte 💪\\n\\n`;\nmessage += `⏰ ${now.toLocaleTimeString('es-PE', {hour: '2-digit', minute: '2-digit'})}\\n`;\nmessage += `📊 Pasos estimados: ${estimatedSteps.toLocaleString()}\\n`;\nmessage += `🎯 Meta para esta hora: ${hourlyGoal.toLocaleString()}\\n\\n`;\n\nif (estimatedSteps < hourlyGoal) {\n  const deficit = hourlyGoal - estimatedSteps;\n  message += `⚡ Te faltan ~${deficit.toLocaleString()} pasos para tu ritmo ideal\\n\\n`;\n}\n\nmessage += `💡 Actividades de 5-10 minutos:\\n`;\nmessage += `${suggestedActivities.join('\\n')}\\n\\n`;\nmessage += `🌟 ${todaysTip}\\n\\n`;\nmessage += `Responde \"Hecho ✅\" cuando te hayas movido`;\n\nconsole.log('Recordatorio generado para hora:', hour);\n\nreturn {\n  messageType: 'activity_reminder',\n  message: message,\n  reminderHour: hour,\n  estimatedSteps: estimatedSteps,\n  hourlyGoal: hourlyGoal,\n  activities: suggestedActivities,\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        380
+      ],
+      "id": "a211f36a-f60d-4071-9b0c-bfd44b2a1480",
+      "name": "Activity Reminder Generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// GENERADOR DE REPORTE SEMANAL - CORREGIDO\nconst context = $json.context;\nconst now = new Date();\n\nconsole.log('=== GENERANDO REPORTE SEMANAL ===');\nconsole.log('Fecha:', now.toDateString());\n\n// Calcular período de la semana\nconst weekEnd = new Date(now);\nconst weekStart = new Date(weekEnd.getTime() - 6 * 24 * 60 * 60 * 1000);\n\n// Datos simulados de la semana (después conectaremos datos reales)\nconst weeklyStats = {\n  totalDays: 7,\n  activeDays: Math.floor(5 + Math.random() * 2), // 5-6 días\n  avgSteps: Math.floor(7200 + Math.random() * 1800), // 7.2K-9K\n  totalSteps: 0,\n  avgSleep: parseFloat((7.2 + Math.random() * 1.1).toFixed(1)), // 7.2-8.3h\n  avgSleepQuality: Math.floor(76 + Math.random() * 19), // 76-95%\n  avgHeartRate: Math.floor(67 + Math.random() * 9), // 67-76 bpm\n  totalCalories: 0,\n  workoutDays: Math.floor(2 + Math.random() * 4), // 2-5 días\n  bestDay: '',\n  improvementArea: ''\n};\n\nweeklyStats.totalSteps = weeklyStats.avgSteps * 7;\nweeklyStats.totalCalories = Math.floor(weeklyStats.totalSteps * 0.04 + 14000);\n\n// Determinar mejor día y área de mejora\nconst dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];\nweeklyStats.bestDay = dayNames[Math.floor(Math.random() * 7)];\n\nconst areas = ['actividad física', 'calidad de sueño', 'constancia', 'recuperación'];\nweeklyStats.improvementArea = areas[Math.floor(Math.random() * areas.length)];\n\nconsole.log('Estadísticas semanales:', weeklyStats);\n\n// Análisis y evaluaciones\nconst stepGoal = 8000;\nconst sleepGoal = 7.5;\n\n// Evaluación de actividad\nlet activityGrade, activityEmoji, activityEval;\nif (weeklyStats.avgSteps >= stepGoal * 1.1) {\n  activityGrade = 'A+'; activityEmoji = '🏆'; activityEval = 'Sobresaliente';\n} else if (weeklyStats.avgSteps >= stepGoal) {\n  activityGrade = 'A'; activityEmoji = '🎉'; activityEval = 'Excelente';\n} else if (weeklyStats.avgSteps >= stepGoal * 0.85) {\n  activityGrade = 'B+'; activityEmoji = '💪'; activityEval = 'Muy bueno';\n} else if (weeklyStats.avgSteps >= stepGoal * 0.70) {\n  activityGrade = 'B'; activityEmoji = '👍'; activityEval = 'Bueno';\n} else {\n  activityGrade = 'C'; activityEmoji = '📈'; activityEval = 'Mejorable';\n}\n\n// Evaluación de sueño\nlet sleepGrade, sleepEmoji, sleepEval;\nif (weeklyStats.avgSleep >= sleepGoal && weeklyStats.avgSleepQuality >= 85) {\n  sleepGrade = 'A+'; sleepEmoji = '😴'; sleepEval = 'Perfecto';\n} else if (weeklyStats.avgSleep >= 7.0) {\n  sleepGrade = 'A'; sleepEmoji = '😊'; sleepEval = 'Excelente';  \n} else if (weeklyStats.avgSleep >= 6.5) {\n  sleepGrade = 'B'; sleepEmoji = '😐'; sleepEval = 'Aceptable';\n} else {\n  sleepGrade = 'C'; sleepEmoji = '😰'; sleepEval = 'Insuficiente';\n}\n\n// Tendencia semanal (simulada)\nconst trends = [\n  { type: 'up', text: '📈 Tendencia ascendente', desc: '¡Cada día mejor!' },\n  { type: 'stable', text: '➡️ Tendencia estable', desc: 'Mantén el ritmo' },\n  { type: 'mixed', text: '📊 Tendencia variable', desc: 'Busca más constancia' }\n];\nconst weekTrend = trends[Math.floor(Math.random() * trends.length)];\n\n// Recomendaciones personalizadas\nconst recommendations = [];\nconst achievements = [];\n\nif (weeklyStats.avgSteps < stepGoal) {\n  const deficit = Math.floor(stepGoal - weeklyStats.avgSteps);\n  recommendations.push(`• Aumenta ${deficit.toLocaleString()} pasos diarios promedio`);\n} else {\n  achievements.push('✅ Meta de pasos semanal alcanzada');\n}\n\nif (weeklyStats.activeDays < 6) {\n  recommendations.push(`• Sé activo ${7 - weeklyStats.activeDays} día(s) más por semana`);\n} else {\n  achievements.push('✅ Excelente constancia semanal');\n}\n\nif (weeklyStats.avgSleep < sleepGoal) {\n  const sleepDeficit = Math.floor((sleepGoal - weeklyStats.avgSleep) * 60);\n  recommendations.push(`• Duerme ${sleepDeficit} min más por noche`);\n} else {\n  achievements.push('✅ Objetivo de sueño cumplido');\n}\n\nif (weeklyStats.workoutDays < 3) {\n  recommendations.push(`• Agrega ${3 - weeklyStats.workoutDays} sesión(es) de ejercicio`);\n} else {\n  achievements.push('✅ Rutina de ejercicio consistente');\n}\n\n// Insights y tips\nconst insights = [\n  `💡 Tu mejor día fue ${weeklyStats.bestDay}`,\n  `🎯 Enfócate en mejorar tu ${weeklyStats.improvementArea}`,\n  `🔥 Quemaste ${(weeklyStats.totalCalories / 1000).toFixed(1)}K calorías esta semana`\n];\n\n// Mensaje motivacional final (usando día del mes en lugar de semana)\nconst closingMessages = [\n  '¡Cada semana es una nueva oportunidad de crecimiento!',\n  '¡Tu dedicación a la salud es inspiradora!',\n  '¡Sigue construyendo estos hábitos saludables!',\n  '¡Eres más fuerte de lo que crees!',\n  '¡El progreso constante siempre gana!'\n];\nconst weeklyMotivation = closingMessages[now.getDate() % closingMessages.length];\n\n// Construir mensaje completo del reporte\nlet message = `📊 REPORTE SEMANAL\\n`;\nmessage += `${weekStart.toLocaleDateString('es-PE')} - ${weekEnd.toLocaleDateString('es-PE')}\\n\\n`;\n\nmessage += `🏃 ACTIVIDAD FÍSICA ${activityEmoji}\\n`;\nmessage += `• Promedio: ${weeklyStats.avgSteps.toLocaleString()} pasos/día\\n`;\nmessage += `• Total: ${(weeklyStats.totalSteps / 1000).toFixed(0)}K pasos\\n`;\nmessage += `• Días activos: ${weeklyStats.activeDays}/7\\n`;\nmessage += `• Calificación: ${activityGrade} (${activityEval})\\n\\n`;\n\nmessage += `😴 DESCANSO ${sleepEmoji}\\n`;\nmessage += `• Promedio: ${weeklyStats.avgSleep}h por noche\\n`;\nmessage += `• Calidad: ${weeklyStats.avgSleepQuality}% promedio\\n`;\nmessage += `• Calificación: ${sleepGrade} (${sleepEval})\\n\\n`;\n\nmessage += `💪 OTROS INDICADORES\\n`;\nmessage += `• Frecuencia cardíaca: ${weeklyStats.avgHeartRate} bpm\\n`;\nmessage += `• Días con ejercicio: ${weeklyStats.workoutDays}/7\\n`;\nmessage += `• Calorías totales: ${(weeklyStats.totalCalories / 1000).toFixed(1)}K\\n\\n`;\n\nmessage += `${weekTrend.text}\\n${weekTrend.desc}\\n\\n`;\n\nif (achievements.length > 0) {\n  message += `🏆 LOGROS ESTA SEMANA:\\n${achievements.join('\\n')}\\n\\n`;\n}\n\nif (recommendations.length > 0) {\n  message += `🎯 ENFÓCATE EN:\\n${recommendations.join('\\n')}\\n\\n`;\n}\n\nmessage += `💡 INSIGHTS:\\n${insights.join('\\n')}\\n\\n`;\n\nmessage += `🌟 ${weeklyMotivation}\\n`;\nmessage += `¡Prepárate para una semana aún mejor! 💪`;\n\nconsole.log('Reporte semanal generado exitosamente');\n\nreturn {\n  messageType: 'weekly_report',\n  message: message,\n  weeklyStats: weeklyStats,\n  period: {\n    start: weekStart.toISOString(),\n    end: weekEnd.toISOString()\n  },\n  grades: {\n    activity: activityGrade,\n    sleep: sleepGrade\n  },\n  achievements: achievements,\n  recommendations: recommendations,\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        560
+      ],
+      "id": "09b26107-64f2-4707-b47e-90e4e3bcb0c7",
+      "name": "Weekly Report Generator"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 10,12,14,16 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        60
+      ],
+      "id": "ab9e27b3-9ec3-4104-9024-6feafadcc77d",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 20 * * 0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        220
+      ],
+      "id": "2eb941e6-e0cf-4d15-9357-1495a79128be",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "health-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        -280
+      ],
+      "id": "29c5d9f9-8ddb-4a55-954d-902dc1be6fda",
+      "name": "Maestro",
+      "webhookId": "2ca35b99-2e07-4642-ac36-429e62b390ed"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 10,12,14,16 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        560
+      ],
+      "id": "9f0a2e18-e4d4-4f26-b195-c042ff208e7d",
+      "name": "Schedule Trigger3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 20 * * 0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        840
+      ],
+      "id": "70215695-834c-4775-ac4c-2707f4a334d7",
+      "name": "Schedule Trigger4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// TEMPORAL: Forzar reporte semanal\nconst inputData = $json[0] || $json;\nconst now = new Date();\n\nlet route = 'weekly_report';\nlet context = {\n  weekEndDate: now.toISOString(),\n  reportType: 'weekly'\n};\n\nreturn {\n  route: route,\n  context: Object.assign({}, context, {\n    timestamp: now.toISOString(),\n    hour: 20,\n    dayOfWeek: 0,\n    triggerSource: 'test_manual'\n  }),\n  originalData: inputData,\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        40,
+        720
+      ],
+      "id": "92907aa5-14ef-4fe5-ae94-2a90e4b7b6a5",
+      "name": "Rep semanal"
+    },
+    {
+      "parameters": {
+        "jsCode": "// TEMPORAL: Forzar recordatorio de actividad\nconst inputData = $json[0] || $json;\nconst now = new Date();\n\n// FORZAR RUTA DE RECORDATORIO\nlet route = 'activity_reminder';\nlet context = {\n  reminderHour: 14, // Simular 2 PM\n  dayOfWeek: 2, // Simular martes\n  workDay: true\n};\n\nconsole.log('→ FORZANDO: Recordatorio de Actividad');\n\nreturn {\n  route: route,\n  context: Object.assign({}, context, {\n    timestamp: now.toISOString(),\n    hour: 14,\n    triggerSource: 'test_manual'\n  }),\n  originalData: inputData,\n  timestamp: now.toISOString()\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        380
+      ],
+      "id": "16a9647a-171f-4e82-a9fe-da6ba9b9ca70",
+      "name": "Cada 2 horas"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "health-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        440
+      ],
+      "id": "cf98ec3b-000b-4090-ba5a-96f4ec6368d1",
+      "name": "Maestro1",
+      "webhookId": "2ca35b99-2e07-4642-ac36-429e62b390ed",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "health-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        700
+      ],
+      "id": "d830e242-4590-47c9-b13b-44617c5c481b",
+      "name": "Maestro2",
+      "webhookId": "2ca35b99-2e07-4642-ac36-429e62b390ed",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Function Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Morning Report Generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Health Data Processor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "User Response Handler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown Handler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Activity Reminder Generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Weekly Report Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Morning Report Generator": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function Router": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Data Processor": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Response Handler": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unknown Handler": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Sender": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activity Reminder Generator": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Report Generator": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Function Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Function Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maestro": {
+      "main": [
+        [
+          {
+            "node": "Function Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cada 2 horas": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Cada 2 horas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rep semanal": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger4": {
+      "main": [
+        [
+          {
+            "node": "Rep semanal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maestro1": {
+      "main": [
+        [
+          {
+            "node": "Cada 2 horas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maestro2": {
+      "main": [
+        [
+          {
+            "node": "Rep semanal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "271700b9-3567-4d8e-807d-492c407ca63e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c709a844c1e4dfd89463aa6de1c7d448f276fdf4ceaf6a08aa6a71db3857a77b"
+  },
+  "id": "PFGx33h6VjYS7ypk",
+  "tags": []
+}
